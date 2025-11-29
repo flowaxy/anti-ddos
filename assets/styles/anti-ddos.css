@@ -1,0 +1,40 @@
+.anti-ddos-page {
+    padding: 0;
+}
+
+.border-left-danger {
+    border-left: 4px solid #dc3545 !important;
+}
+
+.border-left-warning {
+    border-left: 4px solid #ffc107 !important;
+}
+
+.border-left-info {
+    border-left: 4px solid #0dcaf0 !important;
+}
+
+.anti-ddos-page .card {
+    border-radius: 0;
+    box-shadow: none;
+    border: 1px solid #e1e5e9;
+}
+
+.anti-ddos-page .card-header {
+    border-bottom: 1px solid #e1e5e9;
+    padding: 12px 16px;
+    font-weight: 600;
+}
+
+.anti-ddos-page .list-group-item {
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.anti-ddos-page .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.anti-ddos-page .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}

@@ -1,0 +1,13 @@
+{
+    "name": "Anti DDoS",
+    "slug": "anti-ddos",
+    "version": "1.0.0",
+    "description": "Плагін для захисту від DDoS-атак шляхом обмеження запитів з IP-адрес.",
+    "author": "FlowAxy",
+    "author_url": "https://flowaxy.com",
+    "requires": "8.4.0",
+    "tested": "8.4.0",
+    "license": "Proprietary",
+    "text_domain": "anti-ddos",
+    "exposesRoutes": true
+}
