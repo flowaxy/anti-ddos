@@ -82,6 +82,9 @@ class AntiDdosPlugin extends BasePlugin
         // Реєстрація пункту меню
         addFilter('admin_menu', [$this, 'registerAdminMenu'], 20);
         
+        // Реєстрація в категоріях налаштувань
+        addFilter('settings_categories', [$this, 'registerSettingsCategory'], 10);
+        
         // Захист від DDoS (ранній хук з високим пріоритетом)
         addHook('handle_early_request', [$this, 'checkDdos'], 2);
     }
@@ -167,6 +170,36 @@ class AntiDdosPlugin extends BasePlugin
         }
 
         return $menu;
+    }
+
+    /**
+     * Реєстрація в категоріях налаштувань
+     * 
+     * Додає плагін до категорії "Система" на сторінці /admin/settings
+     * 
+     * @param array<string, mixed> $categories Поточні категорії
+     * @return array<string, mixed> Оновлені категорії
+     */
+    public function registerSettingsCategory(array $categories): array
+    {
+        // Перевіряємо, чи плагін активний
+        $pluginManager = function_exists('pluginManager') ? pluginManager() : null;
+        if (!$pluginManager || !method_exists($pluginManager, 'isPluginActive') || !$pluginManager->isPluginActive('anti-ddos')) {
+            return $categories;
+        }
+
+        // Додаємо до категорії "Система"
+        if (isset($categories['system'])) {
+            $categories['system']['items'][] = [
+                'title' => 'Anti DDoS',
+                'description' => 'Захист від DDoS атак',
+                'url' => UrlHelper::admin('anti-ddos'),
+                'icon' => 'fas fa-shield-alt',
+                'permission' => null,
+            ];
+        }
+
+        return $categories;
     }
 
     /**
