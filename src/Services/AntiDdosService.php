@@ -46,9 +46,7 @@ class AntiDdosService
         try {
             $this->db = DatabaseHelper::getInstance();
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Помилка з\'єднання з базою даних - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Помилка з\'єднання з базою даних - ' . $e->getMessage(), ['exception' => $e]);
         }
 
         $this->loadSettings();
@@ -110,9 +108,7 @@ class AntiDdosService
                 }
             }
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Помилка завантаження налаштувань - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Помилка завантаження налаштувань - ' . $e->getMessage(), ['exception' => $e]);
             $this->enabled = false;
         }
     }
@@ -181,9 +177,7 @@ class AntiDdosService
 
             return true;
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Не вдалося створити таблиці - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Не вдалося створити таблиці - ' . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -232,9 +226,7 @@ class AntiDdosService
 
             return (int)$blocked > 0;
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Помилка перевірки заблокованої IP - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Помилка перевірки заблокованої IP - ' . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -337,9 +329,7 @@ class AntiDdosService
 
             return false;
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Помилка перевірки швидкості запитів - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Помилка перевірки швидкості запитів - ' . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }
@@ -384,9 +374,7 @@ class AntiDdosService
                     ]
                 );
             } catch (\Exception $e) {
-                if (function_exists('logger')) {
-                    logger()->logError('AntiDdosService: Помилка логування - ' . $e->getMessage());
-                }
+                logger()->logError('AntiDdosService: Помилка логування - ' . $e->getMessage(), ['exception' => $e]);
             }
         }
 
@@ -495,9 +483,7 @@ class AntiDdosService
                 'top_ips' => $topIps,
             ];
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Помилка отримання статистики - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Помилка отримання статистики - ' . $e->getMessage(), ['exception' => $e]);
             return [];
         }
     }
@@ -570,9 +556,7 @@ class AntiDdosService
             }
             
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Не вдалося завантажити налаштування з БД - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Не вдалося завантажити налаштування з БД - ' . $e->getMessage(), ['exception' => $e]);
         }
         
         return [
@@ -622,9 +606,7 @@ class AntiDdosService
 
             return true;
         } catch (\Throwable $e) {
-            if (function_exists('logger')) {
-                logger()->logException($e, ['method' => 'saveSettings']);
-            }
+            logger()->logException($e, ['method' => 'saveSettings']);
             return false;
         }
     }
@@ -649,9 +631,7 @@ class AntiDdosService
             $this->db->execute('TRUNCATE TABLE anti_ddos_requests');
             return true;
         } catch (\Exception $e) {
-            if (function_exists('logger')) {
-                logger()->logError('AntiDdosService: Помилка очищення логів - ' . $e->getMessage());
-            }
+            logger()->logError('AntiDdosService: Помилка очищення логів - ' . $e->getMessage(), ['exception' => $e]);
             return false;
         }
     }

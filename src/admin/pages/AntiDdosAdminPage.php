@@ -11,10 +11,6 @@ $engineDir = $rootDir . '/engine';
 
 require_once $engineDir . '/interface/admin-ui/includes/AdminPage.php';
 
-// Підключаємо необхідні класи ядра
-if (!class_exists('Logger') && file_exists($engineDir . '/infrastructure/logging/Logger.php')) {
-    require_once $engineDir . '/infrastructure/logging/Logger.php';
-}
 
 if (!class_exists('SecurityHelper') && file_exists($engineDir . '/core/support/helpers/SecurityHelper.php')) {
     require_once $engineDir . '/core/support/helpers/SecurityHelper.php';
@@ -58,9 +54,7 @@ class AntiDdosAdminPage extends AdminPage
             try {
                 $this->antiDdosService = new AntiDdosService('anti-ddos');
             } catch (\Throwable $e) {
-                if (function_exists('logger')) {
-                    logger()->logException($e, ['plugin' => 'anti-ddos', 'action' => 'init']);
-                }
+                logger()->logException($e, ['plugin' => 'anti-ddos', 'action' => 'init']);
             }
         }
 
@@ -119,9 +113,7 @@ class AntiDdosAdminPage extends AdminPage
                 'antiDdosStats' => $stats,
             ]);
         } catch (\Throwable $e) {
-            if (function_exists('logger')) {
-                logger()->logException($e, ['plugin' => 'anti-ddos', 'action' => 'render']);
-            }
+            logger()->logException($e, ['plugin' => 'anti-ddos', 'action' => 'render']);
             $this->setMessage('Помилка завантаження налаштувань: ' . $e->getMessage(), 'danger');
             $this->render([
                 'antiDdosSettings' => ['enabled' => '0', 'max_requests_per_minute' => '60', 'max_requests_per_hour' => '1000', 'block_duration_minutes' => '60', 'whitelist_ips' => [], 'blacklist_ips' => []],
@@ -194,9 +186,7 @@ class AntiDdosAdminPage extends AdminPage
                 $this->setMessage('Помилка збереження налаштувань', 'danger');
             }
         } catch (\Throwable $e) {
-            if (function_exists('logger')) {
-                logger()->logException($e, ['plugin' => 'anti-ddos', 'action' => 'save_settings']);
-            }
+            logger()->logException($e, ['plugin' => 'anti-ddos', 'action' => 'save_settings']);
             $this->setMessage('Помилка: ' . $e->getMessage(), 'danger');
         }
 
