@@ -1,0 +1,55 @@
+name: Telegram Commit Notifier
+
+on:
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Send Telegram
+        env:
+          BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+        run: |
+          [ -z "$BOT_TOKEN" ] && exit 0
+          
+          FILES=$(git diff --name-status HEAD~1 HEAD 2>/dev/null | head -8 | while IFS=$'\t' read s f r; do
+            case "$s" in A*) echo "+ $f";; M*) echo "~ $f";; D*) echo "- $f";; *) echo "  $f";; esac
+          done || echo "init")
+          
+          STAT=$(git diff --shortstat HEAD~1 HEAD 2>/dev/null || echo "")
+          FC=$(echo "$STAT" | grep -oP '\d+(?= file)' || echo "0")
+          ADD=$(echo "$STAT" | grep -oP '\d+(?= insertion)' || echo "0")
+          DEL=$(echo "$STAT" | grep -oP '\d+(?= deletion)' || echo "0")
+          
+          SHA="${GITHUB_SHA:0:7}"
+          MSG=$(echo "${{ github.event.head_commit.message }}" | head -c 150 | sed 's/[<>&"]/./g')
+          
+          echo "" > /tmp/t.txt
+          echo "📦 <b>${GITHUB_REPOSITORY}</b> → <code>${GITHUB_REF_NAME}</code>" >> /tmp/t.txt
+          echo "" >> /tmp/t.txt
+          echo "👤 ${GITHUB_ACTOR} • <code>${SHA}</code>" >> /tmp/t.txt
+          echo "💬 ${MSG}" >> /tmp/t.txt
+          echo "" >> /tmp/t.txt
+          echo "📊 <code>${FC:-0}</code> files  ✅ <code>+${ADD:-0}</code>  ❌ <code>-${DEL:-0}</code>" >> /tmp/t.txt
+          echo "" >> /tmp/t.txt
+          echo "<pre>${FILES}</pre>" >> /tmp/t.txt
+          
+          TEXT=$(cat /tmp/t.txt)
+          URL="${{ github.event.head_commit.url }}"
+          DIFF="${{ github.event.compare }}"
+          
+          KEYBOARD="{\"inline_keyboard\":[[{\"text\":\"📄 View Commit\",\"url\":\"${URL}\"},{\"text\":\"📊 Compare\",\"url\":\"${DIFF}\"}]]}"
+          
+          curl -sS -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -d "chat_id=-1003345117759" \
+            -d "message_thread_id=59" \
+            -d "parse_mode=HTML" \
+            -d "disable_web_page_preview=true" \
+            --data-urlencode "text=${TEXT}" \
+            --data-urlencode "reply_markup=${KEYBOARD}"
