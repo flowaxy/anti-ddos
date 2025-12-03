@@ -12,6 +12,10 @@ $engineDir = $rootDir . '/engine';
 require_once $engineDir . '/interface/admin-ui/includes/AdminPage.php';
 
 
+if (!class_exists('Response') && file_exists($engineDir . '/interface/http/controllers/Response.php')) {
+    require_once $engineDir . '/interface/http/controllers/Response.php';
+}
+
 if (!class_exists('SecurityHelper') && file_exists($engineDir . '/core/support/helpers/SecurityHelper.php')) {
     require_once $engineDir . '/core/support/helpers/SecurityHelper.php';
 }
@@ -30,6 +34,12 @@ class AntiDdosAdminPage extends AdminPage
     public function __construct()
     {
         parent::__construct();
+
+        // Перевірка прав доступу
+        if (! function_exists('current_user_can') || ! current_user_can('admin.access')) {
+            Response::redirectStatic(UrlHelper::admin('dashboard'));
+            exit;
+        }
 
         // Визначаємо шлях до директорії плагіна
         $this->pluginDir = dirname(__DIR__, 3);
