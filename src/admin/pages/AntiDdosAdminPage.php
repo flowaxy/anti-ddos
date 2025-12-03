@@ -191,8 +191,13 @@ class AntiDdosAdminPage extends AdminPage
             if ($result) {
                 // Оновлюємо сервіс для завантаження нових налаштувань
                 $this->antiDdosService = new AntiDdosService('anti-ddos');
+                logger()->logInfo('Anti DDoS налаштування збережено', [
+                    'enabled' => $enabled,
+                    'max_requests_per_minute' => $maxRequestsPerMinute,
+                ]);
                 $this->setMessage('Налаштування успішно збережено', 'success');
             } else {
+                logger()->logWarning('Помилка збереження налаштувань Anti DDoS');
                 $this->setMessage('Помилка збереження налаштувань', 'danger');
             }
         } catch (\Throwable $e) {
@@ -217,14 +222,17 @@ class AntiDdosAdminPage extends AdminPage
         try {
             if ($this->antiDdosService) {
                 if ($this->antiDdosService->clearLogs()) {
+                    logger()->logInfo('Anti DDoS логи очищено');
                     $this->setMessage('Логи успішно очищено', 'success');
                 } else {
+                    logger()->logWarning('Помилка очищення логів Anti DDoS');
                     $this->setMessage('Помилка очищення логів. Перевірте логи.', 'danger');
                 }
             } else {
                 $this->setMessage('Помилка: сервіс Anti DDoS недоступний', 'danger');
             }
         } catch (\Exception $e) {
+            logger()->logError('Anti DDoS помилка очищення логів', ['error' => $e->getMessage()]);
             $this->setMessage('Помилка очищення логів: ' . $e->getMessage(), 'danger');
         }
 
